@@ -122,8 +122,8 @@ function lastLogCheckpoint(req, res) {
         }
       }
     ], function (err, context) {
-      if (err) {
-        console.log('Job failed.', err);
+      if (err || typeof context === 'undefined') {
+        console.log('Job failed.', err || 'No context');
 
         return req.webtaskContext.storage.set({checkpointId: startCheckpointId}, {force: 1}, (error) => {
           if (error) {
