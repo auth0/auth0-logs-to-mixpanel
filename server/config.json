@@ -1,0 +1,11 @@
+{
+  "SLACK_SEND_SUCCESS": true,
+  "EXTENSION_SECRET": "secret-ext",
+  "WT_URL": "http://localhost:3001",
+  "PUBLIC_WT_URL": "http://localhost:3001",
+  "AUTH0_RTA": "auth0.auth0.com",
+  "AUTH0_DOMAIN": "xan-test3.eu.auth0.com",
+  "AUTH0_CLIENT_ID": "Zl33G5J7HA8XNVO5mnEq51iAmxjQMsvw",
+  "AUTH0_CLIENT_SECRET": "7ymgQ3JIaaPFWuZRdSVtkLxIfGeBxJ0Ut1v2VUmv7LPRMCbaPfebwKAW9IO32kwb",
+  "SLACK_INCOMING_WEBHOOK_URL": "https://hooks.slack.com/services/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"
+}

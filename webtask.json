@@ -28,6 +28,24 @@
       "description": "The ammount of logs to be read on each execution. Maximun is 100.",
       "default": 100
     },
+    "SLACK_INCOMING_WEBHOOK_URL": {
+      "description": "Slack webhook"
+    },
+    "SLACK_SEND_SUCCESS": {
+      "description": "Send success messages to slack?",
+      "type": "select",
+      "allowMultiple": true,
+      "options": [
+        {
+          "value": "No",
+          "text": ""
+        },
+        {
+          "value": "Yes",
+          "text": "true"
+        }
+      ]
+    },
     "LOG_LEVEL": {
       "description": "This allows you to specify the log level of events that need to be sent",
       "type": "select",
