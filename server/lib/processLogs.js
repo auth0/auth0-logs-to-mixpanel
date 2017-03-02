@@ -1,6 +1,6 @@
 const Mixpanel = require('mixpanel');
 
-const loggingTools = require('auth0-logging-tools');
+const loggingTools = require('auth0-log-extension-tools');
 const logTypes = require('../lib/logTypes');
 const config = require('../lib/config');
 

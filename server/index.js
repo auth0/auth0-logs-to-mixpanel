@@ -33,7 +33,7 @@ module.exports = (configProvider, storageProvider) => {
     domain: config('AUTH0_DOMAIN'),
     baseUrl: config('PUBLIC_WT_URL'),
     clientName: 'Logs to Mixpanel',
-    urlPrefix: '/admins',
+    urlPrefix: '',
     sessionStorageKey: 'logs-to-mixpanel:apiToken',
     scopes: 'read:logs'
   }));
