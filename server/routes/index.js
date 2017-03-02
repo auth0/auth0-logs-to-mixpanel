@@ -18,7 +18,7 @@ module.exports = (storage) => {
 
   app.get('/api/report', (req, res, next) =>
     storage.read()
-      .then(data => res.json(data))
+      .then(data => res.json((data && data.logs) || []))
       .catch(next));
 
   return app;
