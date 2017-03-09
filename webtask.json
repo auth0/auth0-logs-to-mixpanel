@@ -25,8 +25,11 @@
       "type": "password"
     },
     "BATCH_SIZE": {
-      "description": "The ammount of logs to be read on each execution. Maximun is 100.",
-      "default": 100
+      "description": "The amount of logs to be read on each execution. Maximum is 20.",
+      "default": 10
+    },
+    "START_FROM": {
+      "description": "CheckpointId of log to start with."
     },
     "SLACK_INCOMING_WEBHOOK_URL": {
       "description": "Slack webhook"

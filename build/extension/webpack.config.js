@@ -20,6 +20,7 @@ module.exports = externalModules.then((externals) => {
   externals.compatible['iconv-lite'] = true; // Local: 0.4.13 - Webtask: 0.4.10
   externals.compatible['lodash'] = 'lodash@4.8.2'; // Local: ^3.10.0, ^3.10.1, ^4.6.1, ^4.0.0, ~3.10.1, ^4.3.0, ~4.5.1, ^4.1.0, ^4.2.0, ^4.2.1, ^4.5.0, ~3.5.0 - Webtask: 3.10.1
   externals.compatible['lru-cache'] = true; // Local: ^4.0.0, ~4.0.0, 2 - Webtask: 2.6.4
+  externals.compatible['lru-memoizer'] = true;
   externals.compatible['mime-db'] = true; // Local: >= 1.21.0 < 2, ~1.22.0 - Webtask: 1.10.0
   externals.compatible['moment'] = true; // Local: ^2.12.0 - Webtask: 2.10.3
   externals.compatible['mime'] = true; // Local: ~1.1.0 - Webtask: 1.0.1
