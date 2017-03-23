@@ -14,20 +14,6 @@ const logger = require('./lib/logger');
 const config = require('./lib/config');
 
 module.exports = (configProvider, storageProvider) => {
-  urlHelpers.getBaseUrl = function(req, protocol) {
-    var urlProtocol = protocol;
-    if (!urlProtocol && process.env.NODE_ENV === 'development') {
-      urlProtocol = 'http';
-    }
-
-    const originalUrl = url.parse(req.originalUrl || '').pathname || '';
-    return url.format({
-      protocol: urlProtocol || 'https',
-      host: req.headers.host,
-      pathname: originalUrl.replace(req.path, '').replace(/\/$/g, '')
-    });
-  };
-
   config.setProvider(configProvider);
 
   const storage = storageProvider

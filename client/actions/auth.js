@@ -8,6 +8,8 @@ export function logout() {
     localStorage.removeItem('logs-to-mixpanel:apiToken');
     sessionStorage.removeItem('logs-to-mixpanel:apiToken');
 
+    window.location = window.config.AUTH0_MANAGE_URL;
+
     dispatch({
       type: constants.LOGOUT_SUCCESS
     });
