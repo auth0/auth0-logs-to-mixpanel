@@ -1,9 +1,11 @@
+const url = require('url');
 const path = require('path');
 const morgan = require('morgan');
 const Express = require('express');
 const bodyParser = require('body-parser');
 const tools = require('auth0-extension-tools');
 const expressTools = require('auth0-extension-express-tools');
+const urlHelpers = require('auth0-extension-express-tools').urlHelpers;
 
 const routes = require('./routes');
 const meta = require('./routes/meta');
@@ -12,6 +14,20 @@ const logger = require('./lib/logger');
 const config = require('./lib/config');
 
 module.exports = (configProvider, storageProvider) => {
+  urlHelpers.getBaseUrl = function(req, protocol) {
+    var urlProtocol = protocol;
+    if (!urlProtocol && process.env.NODE_ENV === 'development') {
+      urlProtocol = 'http';
+    }
+
+    const originalUrl = url.parse(req.originalUrl || '').pathname || '';
+    return url.format({
+      protocol: urlProtocol || 'https',
+      host: req.headers.host,
+      pathname: originalUrl.replace(req.path, '').replace(/\/$/g, '')
+    });
+  };
+
   config.setProvider(configProvider);
 
   const storage = storageProvider

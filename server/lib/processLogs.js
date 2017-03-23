@@ -5,8 +5,7 @@ const config = require('../lib/config');
 
 module.exports = (storage) =>
   (req, res, next) => {
-    const isScheduled = req.webtaskContext && req.webtaskContext.body && req.webtaskContext.body.schedule && req.webtaskContext.body.state == 'active';
-    if (!isScheduled) {
+    if (!req.body || !req.body.schedule || req.body.state !== 'active') {
       return next();
     }
 
@@ -19,27 +18,50 @@ module.exports = (storage) =>
         cb();
       }
 
+      Logger.import_batch(logs, function(errorList) {
+        if (errorList && errorList.length > 0) {
+          if (logs.length > 10) {
+            const currentBatch = logs.splice(0, 10);
+
+            return Logger.import_batch(currentBatch, function(errors) {
+              if (errors && errors.length > 0) {
+                console.log('Errors occurred sending logs to Mixpanel:', errorList);
+                return cb(errorList);
+              }
+
+              console.log(`${currentBatch.length} events successfully sent to mixpanel.`);
+              return sendLogs(logs, cb);
+            });
+          }
+
+          console.log('Errors occurred sending logs to Mixpanel:', errorList);
+
+          return cb(errorList);
+        }
+
+        console.log(`${logs.length} events successfully sent to mixpanel.`);
+        return cb();
+      });
+    };
+
+    const onLogsReceived = (logs, cb) => {
+      if (!logs || !logs.length) {
+        return cb();
+      }
+
       const now = Date.now();
       const mixpanelEvents = logs.map(function (log) {
         const eventName = loggingTools.logTypes[log.type].event;
-        // TODO - consider setting the time to date in the underlying log file?
-        // log.time = log.date;
         log.time = now;
         log.distinct_id = 'auth0-logs';
+
         return {
           event: eventName,
           properties: log
         };
       });
 
-      Logger.import_batch(mixpanelEvents, function(errorList) {
-        if (errorList && errorList.length > 0) {
-          console.log('Errors occurred sending logs to Mixpanel:', JSON.stringify(errorList));
-          return cb(errorList);
-        }
-        console.log(`${mixpanelEvents.length} events successfully sent to mixpanel.`);
-        return cb();
-      });
+      sendLogs(mixpanelEvents, cb);
     };
 
     const slack = new loggingTools.SlackReporter({ hook: config('SLACK_INCOMING_WEBHOOK_URL') });
@@ -52,7 +74,7 @@ module.exports = (storage) =>
       startFrom: config('START_FROM'),
       logTypes: config('LOG_TYPES'),
       logLevel: config('LOG_LEVEL'),
-      onLogsReceived: sendLogs,
+      onLogsReceived: onLogsReceived,
       onSuccess: (config('SLACK_SEND_SUCCESS')) ? slack.send : null,
       onError: slack.send
     };

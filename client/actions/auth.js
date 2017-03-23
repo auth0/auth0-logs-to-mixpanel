@@ -1,5 +1,5 @@
 import axios from 'axios';
-import jwtDecode from 'jwt-decode';
+import { isTokenExpired, decodeToken } from '../utils/auth';
 
 import * as constants from '../constants';
 
@@ -18,24 +18,31 @@ export function loadCredentials() {
   return (dispatch) => {
     const apiToken = sessionStorage.getItem('logs-to-mixpanel:apiToken');
     if (apiToken) {
-      const decodedToken = jwtDecode(apiToken);
+      const decodedToken = decodeToken(apiToken);
+
+      if (isTokenExpired(decodedToken)) {
+        return;
+      }
+
       axios.defaults.headers.common.Authorization = `Bearer ${apiToken}`;
+      sessionStorage.setItem('logs-to-mixpanel:apiToken', apiToken);
 
       dispatch({
-        type: constants.LOADED_TOKEN,
+        type: constants.RECIEVED_TOKEN,
         payload: {
-          apiToken
+          token: apiToken
         }
       });
 
       dispatch({
         type: constants.LOGIN_SUCCESS,
         payload: {
-          apiToken,
+          token: apiToken,
           decodedToken,
           user: decodedToken
         }
       });
+
       return;
     }
   };
