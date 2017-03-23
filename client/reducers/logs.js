@@ -35,7 +35,7 @@ export const logs = createReducer(fromJS(initialState), { // eslint-disable-line
     const { data } = action.payload;
     return state.merge({
       loading: false,
-      records: fromJS(_.orderBy(data, 'end', 'desc')).concat(state.get('records'))
+      records: fromJS(_.orderBy(data, 'start', 'desc')).concat(state.get('records'))
     });
   }
 });

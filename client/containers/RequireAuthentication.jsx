@@ -13,7 +13,7 @@ export default function RequireAuthentication(InnerComponent) {
 
     requireAuthentication() {
       if (!this.props.auth.isAuthenticated && !this.props.auth.isAuthenticating) {
-        window.location = '/login';
+        window.location = window.config.BASE_URL + '/login';
       }
     }
 
