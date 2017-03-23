@@ -42,7 +42,7 @@ module.exports = externalModules.then((externals) => {
   externals.compatible['auth0'] = 'auth0@2.4.0';
   externals.compatible['auth0-oauth2-express'] = 'auth0-oauth2-express@1.1.5';
   externals.compatible['auth0-extension-tools'] = true;
-  externals.compatible['auth0-extension-express-tools'] = true;
+  // externals.compatible['auth0-extension-express-tools'] = true;
   externals.compatible['jwks-rsa'] = 'jwks-rsa@1.1.1';
   externals.compatible['nconf'] = true;
   externals.compatible['node-uuid'] = true;
@@ -53,7 +53,6 @@ module.exports = externalModules.then((externals) => {
   externals.compatible['body-parser'] = true;
   externals.compatible['mime-types'] = true;
   externals.compatible['webtask-tools'] = true;
-  // externals.compatible['validate.js'] = false;
 
   // Transform to commonjs.
   Object.keys(externals.compatible).forEach(k => {
@@ -80,7 +79,9 @@ module.exports = externalModules.then((externals) => {
         {
           test: /\.jsx?$/,
           loader: 'babel',
-          exclude: path.join(__dirname, '../../node_modules/')
+          exclude(modulePath) {
+            return /node_modules/.test(modulePath) && !/express-conditional-middleware/.test(modulePath);
+          }
         },
         { test: /\.json$/, loader: 'json' }
       ]

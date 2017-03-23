@@ -2,6 +2,7 @@ const Mixpanel = require('mixpanel');
 
 const loggingTools = require('auth0-log-extension-tools');
 const config = require('../lib/config');
+const logger = require('../lib/logger');
 
 module.exports = (storage) =>
   (req, res, next) => {
@@ -25,21 +26,21 @@ module.exports = (storage) =>
 
             return Logger.import_batch(currentBatch, function(errors) {
               if (errors && errors.length > 0) {
-                console.log('Errors occurred sending logs to Mixpanel:', errorList);
-                return cb(errorList);
+                logger.error(errors);
+                return cb(errors);
               }
 
-              console.log(`${currentBatch.length} events successfully sent to mixpanel.`);
+              logger.info(`${currentBatch.length} events successfully sent to mixpanel.`);
               return sendLogs(logs, cb);
             });
           }
 
-          console.log('Errors occurred sending logs to Mixpanel:', errorList);
+          logger.error(errorList);
 
           return cb(errorList);
         }
 
-        console.log(`${logs.length} events successfully sent to mixpanel.`);
+        logger.info(`${logs.length} events successfully sent to mixpanel.`);
         return cb();
       });
     };
@@ -51,9 +52,11 @@ module.exports = (storage) =>
 
       const now = Date.now();
       const mixpanelEvents = logs.map(function (log) {
-        const eventName = loggingTools.logTypes[log.type].event;
+        const eventName = loggingTools.getLogType(log.type);
         log.time = now;
-        log.distinct_id = 'auth0-logs';
+        if (log.user_id) {
+          log.distinct_id = log.user_id;
+        }
 
         return {
           event: eventName,
@@ -79,7 +82,7 @@ module.exports = (storage) =>
       onError: slack.send
     };
 
-    const logger = loggingTools.Auth0Logger(storage, options);
+    const auth0logger = loggingTools.Auth0Logger(storage, options);
 
-    return logger(req, res, next);
+    return auth0logger(req, res, next);
   };
