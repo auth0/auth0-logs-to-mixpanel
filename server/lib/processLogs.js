@@ -10,6 +10,10 @@ module.exports = (storage) =>
       return next();
     }
 
+    const normalizeErrors = errors => {
+      return errors.map(err => ({ name: err.name, message: err.message, stack: err.stack }))
+    };
+
     const Logger = Mixpanel.init(config('MIXPANEL_TOKEN'), {
       key: config('MIXPANEL_KEY')
     });
@@ -27,7 +31,7 @@ module.exports = (storage) =>
             return Logger.import_batch(currentBatch, function(errors) {
               if (errors && errors.length > 0) {
                 logger.error(errors);
-                return cb(errors);
+                return cb(normalizeErrors(errors));
               }
 
               logger.info(`${currentBatch.length} events successfully sent to mixpanel.`);
@@ -37,7 +41,7 @@ module.exports = (storage) =>
 
           logger.error(errorList);
 
-          return cb(errorList);
+          return cb(normalizeErrors(errorList));
         }
 
         logger.info(`${logs.length} events successfully sent to mixpanel.`);
@@ -54,9 +58,7 @@ module.exports = (storage) =>
       const mixpanelEvents = logs.map(function (log) {
         const eventName = loggingTools.getLogType(log.type);
         log.time = now;
-        if (log.user_id) {
-          log.distinct_id = log.user_id;
-        }
+        log.distinct_id = log.user_id || log.user_name || log.client_id || log._id;
 
         return {
           event: eventName,
@@ -67,7 +69,7 @@ module.exports = (storage) =>
       sendLogs(mixpanelEvents, cb);
     };
 
-    const slack = new loggingTools.SlackReporter({ hook: config('SLACK_INCOMING_WEBHOOK_URL') });
+    const slack = new loggingTools.SlackReporter({ hook: config('SLACK_INCOMING_WEBHOOK_URL'), username: 'auth0-logs-to-mixpanel', title: 'Logs To Mixpanel' });
 
     const options = {
       domain: config('AUTH0_DOMAIN'),
