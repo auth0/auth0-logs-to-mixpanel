@@ -78,10 +78,7 @@ module.exports = (storage) =>
       batchSize: config('BATCH_SIZE'),
       startFrom: config('START_FROM'),
       logTypes: config('LOG_TYPES'),
-      logLevel: config('LOG_LEVEL'),
-      onLogsReceived: onLogsReceived,
-      onSuccess: (config('SLACK_SEND_SUCCESS')) ? slack.send : null,
-      onError: slack.send
+      logLevel: config('LOG_LEVEL')
     };
 
     const auth0logger = new loggingTools.LogsProcessor(storage, options);
