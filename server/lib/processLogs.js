@@ -69,7 +69,7 @@ module.exports = (storage) =>
       sendLogs(mixpanelEvents, cb);
     };
 
-    const slack = new loggingTools.SlackReporter({ hook: config('SLACK_INCOMING_WEBHOOK_URL'), username: 'auth0-logs-to-mixpanel', title: 'Logs To Mixpanel' });
+    const slack = new loggingTools.reporters.SlackReporter({ hook: config('SLACK_INCOMING_WEBHOOK_URL'), username: 'auth0-logs-to-mixpanel', title: 'Logs To Mixpanel' });
 
     const options = {
       domain: config('AUTH0_DOMAIN'),
@@ -84,7 +84,16 @@ module.exports = (storage) =>
       onError: slack.send
     };
 
-    const auth0logger = loggingTools.Auth0Logger(storage, options);
+    const auth0logger = new loggingTools.LogsProcessor(storage, options);
 
-    return auth0logger(req, res, next);
+    return auth0logger
+      .run(onLogsReceived)
+      .then(result => {
+        slack.send(result.status, result.checkpoint);
+        res.json(result);
+      })
+      .catch(err => {
+        slack.send({ error: err, logsProcessed: 0 }, null);
+        next(err);
+      });
   };
