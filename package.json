@@ -8,7 +8,7 @@
     "clean": "rimraf dist",
     "client:build": "npm run clean && cross-env NODE_ENV=production webpack --config ./build/webpack/config.prod.js --colors -p",
     "extension:build": "cross-env NODE_ENV=production webpack -p --config ./build/extension/webpack.config.js",
-    "extension:bundle": "cp ./dist/auth0-bitbucket-deploy.extension.$npm_package_version.js ./build/bundle.js",
+    "extension:bundle": "cp ./dist/auth0-logs-to-mixpanel.extension.$npm_package_version.js ./build/bundle.js",
     "extension:size": "cross-env NODE_ENV=production webpack -p --config ./build/extension/webpack.config.js --json > ./build/extension/bundle-size.json && node ./build/extension/bundle-size.js",
     "lint:js": "eslint --ignore-path .gitignore --ignore-pattern build --ignore-pattern webpack .",
     "serve:dev": "cross-env NODE_ENV=development nodemon --ignore assets/app/ --ignore build/webpack/ --ignore server/data.json --ignore client/ --ignore node_modules/ ./build/webpack/server.js",
