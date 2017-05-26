@@ -6,7 +6,10 @@ const logger = require('../lib/logger');
 
 module.exports = (storage) =>
   (req, res, next) => {
-    if (!req.body || !req.body.schedule || req.body.state !== 'active') {
+    const wtBody = (req.webtaskContext && req.webtaskContext.body) || req.body || {};
+    const isCron = (wtBody.schedule && wtBody.state === 'active');
+
+    if (!isCron) {
       return next();
     }
 
@@ -54,9 +57,11 @@ module.exports = (storage) =>
         return cb();
       }
 
+      logger.info(`${logs.length} logs received.`);
+
       const now = Date.now();
-      const mixpanelEvents = logs.map(function (log) {
-        const eventName = loggingTools.getLogType(log.type);
+      const mixpanelEvents = logs.map((log) => {
+        const eventName = loggingTools.logTypes.get(log.type);
         log.time = now;
         log.distinct_id = log.user_id || log.user_name || log.client_id || log._id;
 
