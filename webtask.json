@@ -5,6 +5,7 @@
   "author": "auth0",
   "description": "This extension will take all of your Auth0 logs and export them to Mixpanel",
   "type": "cron",
+  "initialUrlPath": "/login",
   "repository": "https://github.com/auth0/auth0-logs-to-mixpanel",
   "keywords": [
     "auth0",
@@ -12,7 +13,9 @@
   ],
   "schedule": "0 */5 * * * *",
   "auth0": {
-    "scopes": "read:logs"
+    "createClient": true,
+    "onUninstallPath": "/.extensions/on-uninstall",
+    "scopes": "read:logs delete:clients"
   },
   "secrets": {
     "MIXPANEL_TOKEN": {
@@ -25,8 +28,29 @@
       "type": "password"
     },
     "BATCH_SIZE": {
-      "description": "The ammount of logs to be read on each execution. Maximun is 100.",
-      "default": 100
+      "description": "The amount of logs to be read on each execution. Maximum is 20.",
+      "default": 10
+    },
+    "START_FROM": {
+      "description": "CheckpointId of log to start with."
+    },
+    "SLACK_INCOMING_WEBHOOK_URL": {
+      "description": "Slack webhook"
+    },
+    "SLACK_SEND_SUCCESS": {
+      "description": "Send success messages to slack?",
+      "type": "select",
+      "allowMultiple": true,
+      "options": [
+        {
+          "value": "No",
+          "text": ""
+        },
+        {
+          "value": "Yes",
+          "text": "true"
+        }
+      ]
     },
     "LOG_LEVEL": {
       "description": "This allows you to specify the log level of events that need to be sent",
