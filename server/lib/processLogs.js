@@ -5,7 +5,7 @@ const loggingTools = require('auth0-log-extension-tools');
 const config = require('../lib/config');
 const logger = require('../lib/logger');
 
-module.exports = (storage) =>
+module.exports = storage =>
   (req, res, next) => {
     const wtBody = (req.webtaskContext && req.webtaskContext.body) || req.body || {};
     const wtHead = (req.webtaskContext && req.webtaskContext.headers) || {};
@@ -15,9 +15,8 @@ module.exports = (storage) =>
       return next();
     }
 
-    const normalizeErrors = errors => {
-      return errors.map(err => ({ name: err.name, message: err.message, stack: err.stack }))
-    };
+    const normalizeErrors = errors =>
+      errors.map(err => ({ name: err.name, message: err.message, stack: err.stack }));
 
     const Logger = Mixpanel.init(config('MIXPANEL_TOKEN'), {
       key: config('MIXPANEL_KEY')
@@ -73,7 +72,7 @@ module.exports = (storage) =>
         };
       });
 
-      sendLogs(mixpanelEvents, cb);
+      return sendLogs(mixpanelEvents, cb);
     };
 
     const slack = new loggingTools.reporters.SlackReporter({ hook: config('SLACK_INCOMING_WEBHOOK_URL'), username: 'auth0-logs-to-mixpanel', title: 'Logs To Mixpanel' });
@@ -121,12 +120,12 @@ module.exports = (storage) =>
           if (data.lastReportDate !== now && new Date().getHours() >= reportTime) {
             sendDailyReport(now);
           }
-        })
+        });
     };
 
     return auth0logger
       .run(onLogsReceived)
-      .then(result => {
+      .then((result) => {
         if (result && result.status && result.status.error) {
           slack.send(result.status, result.checkpoint);
         } else if (config('SLACK_SEND_SUCCESS') === true || config('SLACK_SEND_SUCCESS') === 'true') {
@@ -135,7 +134,7 @@ module.exports = (storage) =>
         checkReportTime();
         res.json(result);
       })
-      .catch(err => {
+      .catch((err) => {
         slack.send({ error: err, logsProcessed: 0 }, null);
         checkReportTime();
         next(err);
