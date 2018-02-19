@@ -1,13 +1,12 @@
 'use strict';
 
 const async = require('async');
-const moment = require('moment');
-const useragent = require('useragent');
 const express = require('express');
 const Webtask = require('webtask-tools');
 const app = express();
 const Request = require('request');
 const memoizer = require('lru-memoizer');
+const dogapi = require('dogapi')
 
 function lastLogCheckpoint(req, res) {
   let ctx = req.webtaskContext;
