@@ -7,7 +7,9 @@
   "type": "cron",
   "category": "log_export",
   "initialUrlPath": "/login",
-  "repository": "https://github.com/auth0/auth0-logs-to-mixpanel",
+  "repository": "https://github.com/auth0-extensions/auth0-logs-to-mixpanel",
+  "docsUrl": "https://auth0.com/docs/extensions/mixpanel",
+  "logoUrl": "https://cdn.auth0.com/extensions/auth0-logs-to-mixpanel/assets/logo.png",
   "keywords": [
     "auth0",
     "extension"
