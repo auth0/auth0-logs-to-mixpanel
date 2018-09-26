@@ -2,13 +2,16 @@ const path = require('path');
 const gulp = require('gulp');
 const open = require('open');
 const ngrok = require('ngrok');
+const wormhole = require('wormhole');
 const util = require('gulp-util');
 const nodemon = require('gulp-nodemon');
 
 gulp.task('run', () => {
-  ngrok.connect(3000, (ngrokError, url) => {
-    if (ngrokError) {
-      throw ngrokError;
+  const tunnel = process.env.WORMHOLE_REMOTE_HOST ? wormhole : ngrok;
+
+  tunnel.connect(3000, (error, url) => {
+    if (error) {
+      throw error;
     }
 
     nodemon({
